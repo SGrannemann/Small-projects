@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# TODO: implement an commandline argument for the word list file.
+
 # TODO: build a scraper to expand the word list
 
 
@@ -123,45 +123,45 @@ def letterGuessing(guessed_letters):
     return guessed_letter
 
 ###############################################################################
-# set the number of guesses in global variable
 
 
-script, filename = sys.argv
+if __name__ == "__main__":
+    script, filename = sys.argv
 
-number_of_guesses = 10
-# initialize list to collect all correct guesses
-already_guessed_letters = []
+    number_of_guesses = 10
+    # initialize list to collect all correct guesses
+    already_guessed_letters = []
 
-# generate word
-word_to_guess = selectWord(filename)
+    # generate word
+    word_to_guess = selectWord(filename)
 
-# mask the word
-masked_word = maskWord(word_to_guess, already_guessed_letters)
+    # mask the word
+    masked_word = maskWord(word_to_guess, already_guessed_letters)
 
-i = 0
-while True:
-    # check if game Over
-    if i == number_of_guesses:
-        gameOver()
-        playAgain()
+    i = 0
+    while True:
+        # check if game Over
+        if i == number_of_guesses:
+            gameOver()
+            playAgain()
 
-    # ask the player whether he wants to solve
-    if i > 0.5 * number_of_guesses:
-        directSolve(word_to_guess)
+        # ask the player whether he wants to solve
+        if i > 0.5 * number_of_guesses:
+            directSolve(word_to_guess)
 
-    # let the player guess a letter
-    guessed_letter = letterGuessing(already_guessed_letters)
+        # let the player guess a letter
+        guessed_letter = letterGuessing(already_guessed_letters)
 
-    if guessed_letter in word_to_guess:
-        print("Correct guess!\n")
-        masked_word = maskWord(word_to_guess, already_guessed_letters)
+        if guessed_letter in word_to_guess:
+            print("Correct guess!\n")
+            masked_word = maskWord(word_to_guess, already_guessed_letters)
 
-    else:
-        print("Wrong guess!")
+        else:
+            print("Wrong guess!")
 
-    if '*' not in masked_word:
-        winner()
+        if '*' not in masked_word:
+            winner()
 
-    i += 1
+        i += 1
 
-    print(str(number_of_guesses - i) + " tries remaining.")
+        print(str(number_of_guesses - i) + " tries remaining.")
