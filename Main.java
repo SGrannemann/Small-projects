@@ -24,11 +24,25 @@ public static void main ( String[] args ){
       System.out.println(listOfWords);
       Random rand = new Random();
       int randomNumber = rand.nextInt(listOfWords.size());
-
+      StateOfGame gameState = new StateOfGame();
       Word word = new Word(listOfWords.get(randomNumber));
+      word.maskTheWord(gameState);
+
 
       System.out.println(word.getWord());
       System.out.println(word.getMaskedWord());
+      while (true){
+      Scanner inputReader = new Scanner(System.in);
+      System.out.println("Guess a letter. Empty to stop.");
+      String guess = inputReader.nextLine();
+      if (guess.equals("")){
+        break;
+      }
+      gameState.addLetter(guess);
+      System.out.println(gameState.getLetters());
+      word.maskTheWord(gameState);
+      System.out.println(word.getMaskedWord());
     }
+  }
 
 }
