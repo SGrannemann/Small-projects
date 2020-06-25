@@ -31,7 +31,6 @@ def deleteInformation():
 
 
 
-
 #myOutputFile = csv.writer(open("ListOfPathsAndIDs.csv", "w"))
 #for key, value in path_ID_dict.items():
     #myOutputFile.writerow([key, value])
