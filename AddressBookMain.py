@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#import csv
+import csv
 
 
 def die():
@@ -24,35 +24,43 @@ def reviewInformation():
 def deleteInformation():
     print("deleteInformation was activated.")
 
+def updateInformation():
+    print("updateInformation was activated.")
+
+
+names = []
+surnames = []
+ages = []
+addresses = []
+emails = []
+phone_numbers = []
 
 
 
-
-
-
-
-#myOutputFile = csv.writer(open("ListOfPathsAndIDs.csv", "w"))
 #for key, value in path_ID_dict.items():
     #myOutputFile.writerow([key, value])
 
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
+    myOutputFile = csv.writer(open("AddressBook.csv", "w"))
     print("Hello and welcome to the address book. ")
     while True:
         while True:
-            user_input = input("Select an option: \n (a)dd new information, \n (r)eview existing information \n (d)elete information \n (q)uit?. \n")
-            if user_input in ['a', 'r', 'd', 'q']:
+            user_input = input("Select an option: \n (c)reate an entry, \n (r)ead existing information \n (u)pdate information \n (d)elete information \n (q)uit?. \n")
+            if user_input.lower() in ['c', 'r', 'u', 'd', 'q']:
                 break
             else:
                 print("Please select one of the available options.")
                 continue
         if user_input == 'q':
             break
-        elif user_input.lower() == 'a':
+        elif user_input.lower() == 'c':
             addInformation()
         elif user_input.lower() == 'r':
             reviewInformation()
+        elif user_input.lower() == 'u':
+            updateInformation()
         elif user_input.lower() == 'd':
             deleteInformation()
         else:
