@@ -70,10 +70,8 @@ emails = []
 phone_numbers = []
 
 
-
-#for key, value in path_ID_dict.items():
-    #myOutputFile.writerow([key, value])
-
+# for key, value in path_ID_dict.items():
+# myOutputFile.writerow([key, value])
 
 
 if __name__ == "__main__":
