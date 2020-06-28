@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import csv
+import re
 
 
 def die():
@@ -13,8 +14,39 @@ def die():
     exit(0)
 
 
-def addInformation():
-    print("addInformation was activated.")
+def createEntry():
+    print("createEntry was activated.")
+    name = input(phrase.format('name'))
+    surname = input(phrase.format('surname'))
+    while True:
+        try:
+            age = int(input(phrase.format('age')))
+            break
+        except ValueError:
+            print('Please enter a number.')
+            continue
+    while True:
+        street = input(phrase.format('street and housenumber'))
+        if streetChecker(street):
+            break
+    while True:
+        city = input(phrase.format('zipcode and city'))
+        if cityChecker(city):
+            break
+
+
+def streetChecker(street):
+    streetRegExObject = re.compile(r'([a-zA-Z]+(\s|-)?)+\s\d{1,3}')
+    if streetRegExObject.findall(street):
+        print('correct street entered.')
+        return True
+    else:
+        print('no regex match found.')
+        return False
+
+
+def cityChecker():
+    print("checking the city.")
 
 
 def reviewInformation():
@@ -24,10 +56,12 @@ def reviewInformation():
 def deleteInformation():
     print("deleteInformation was activated.")
 
+
 def updateInformation():
     print("updateInformation was activated.")
 
 
+phrase = 'Please provide the {}. \n'
 names = []
 surnames = []
 ages = []
@@ -56,7 +90,7 @@ if __name__ == "__main__":
         if user_input == 'q':
             break
         elif user_input.lower() == 'c':
-            addInformation()
+            createEntry()
         elif user_input.lower() == 'r':
             reviewInformation()
         elif user_input.lower() == 'u':
