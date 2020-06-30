@@ -16,8 +16,14 @@ def die():
 
 def createEntry():
     print("createEntry was activated.")
-    name = input(phrase.format('name'))
-    surname = input(phrase.format('surname'))
+    while True:
+        name = input(phrase.format('name'))
+        if name.isalpha():
+            break
+    while True:
+        surname = input(phrase.format('surname'))
+        if surname.isalpha():
+            break
     while True:
         try:
             age = int(input(phrase.format('age')))
@@ -27,8 +33,10 @@ def createEntry():
             continue
     while True:
         street = input(phrase.format('street and housenumber'))
-        if streetChecker(street):
+        street_dict = streetChecker(street)
+        if street_dict:
             break
+    print(street_dict)
     while True:
         city = input(phrase.format('zipcode and city'))
         if cityChecker(city):
@@ -36,17 +44,23 @@ def createEntry():
 
 
 def streetChecker(street):
-    streetRegExObject = re.compile(r'([a-zA-Z]+(\s|-)?)+\s\d{1,3}')
-    if streetRegExObject.findall(street):
+    streetRegExObject = re.compile(r'([a-zA-Z]+(\s|-)?)+\s(\d{1,3})')
+    mo = streetRegExObject.search(street)
+    dict = {}
+    if mo:
         print('correct street entered.')
-        return True
+        dict['Street'] = mo.group(1)
+        dict['Housenumber'] = mo.group(3)
     else:
         print('no regex match found.')
-        return False
+    return dict
 
 
-def cityChecker():
+def cityChecker(city):
     print("checking the city.")
+    cityCheckerRegExObject = re.compile(r'(\d{5})\s([a-zA-Z]+(\s|-)?)+')
+    if cityCheckerRegExObject.search(city):
+        print('correct city format entered.')
 
 
 def reviewInformation():
