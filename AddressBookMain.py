@@ -2,6 +2,7 @@
 
 import csv
 import re
+import collections
 
 
 def die():
@@ -15,18 +16,24 @@ def die():
 
 
 def createEntry():
+    # list_of_keys = ['Name', 'Surname', 'Age', 'Street', 'Housenumber', 'ZIP',
+    #                'City']
+    data = collections.OrderedDict()
     print("createEntry was activated.")
     while True:
         name = input(phrase.format('name'))
         if name.isalpha():
+            data['Name'] = name
             break
     while True:
         surname = input(phrase.format('surname'))
         if surname.isalpha():
+            data['Surname'] = surname
             break
     while True:
         try:
             age = int(input(phrase.format('age')))
+            data['Age'] = str(age)
             break
         except ValueError:
             print('Please enter a number.')
@@ -35,12 +42,23 @@ def createEntry():
         street = input(phrase.format('street and housenumber'))
         street_dict = streetChecker(street)
         if street_dict:
+            data['Street'] = street_dict['Street']
+            data['Housenumber'] = street_dict['Housenumber']
             break
+        print('Please enter the street and housenumber in a valid format.')
     print(street_dict)
+
     while True:
         city = input(phrase.format('zipcode and city'))
-        if cityChecker(city):
+        city_dict = cityChecker(city)
+        if city_dict:
             break
+        print(' Please enter the zip code and city in a valid format.')
+    print(city_dict)
+
+    print(data)
+    # for key, value in path_ID_dict.items():
+    #    myOutputFile.writerow([key, value])
 
 
 def streetChecker(street):
@@ -57,10 +75,17 @@ def streetChecker(street):
 
 
 def cityChecker(city):
-    print("checking the city.")
+    # does not correctly work for Porta Westfalica
     cityCheckerRegExObject = re.compile(r'(\d{5})\s([a-zA-Z]+(\s|-)?)+')
-    if cityCheckerRegExObject.search(city):
-        print('correct city format entered.')
+    mo = cityCheckerRegExObject.search(city)
+    dict = {}
+    if mo:
+        print('correct city entered.')
+        dict['zipcode'] = mo.group(1)
+        dict['city'] = mo.group(2)
+    else:
+        print('no regex match found.')
+    return dict
 
 
 def reviewInformation():
@@ -87,7 +112,7 @@ phone_numbers = []
 # for key, value in path_ID_dict.items():
 # myOutputFile.writerow([key, value])
 
-
+###############################################################################
 if __name__ == "__main__":
     myOutputFile = csv.writer(open("AddressBook.csv", "w"))
     print("Hello and welcome to the address book. ")
