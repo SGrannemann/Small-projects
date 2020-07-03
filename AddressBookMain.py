@@ -3,6 +3,7 @@
 import csv
 import re
 import collections
+import pyinputplus as pyip
 
 
 def die():
@@ -20,11 +21,11 @@ def createEntry():
     #                'City']
     data = collections.OrderedDict()
     print("createEntry was activated.")
-    while True:
-        name = input(phrase.format('name'))
-        if name.isalpha():
-            data['Name'] = name
-            break
+    name = pyip.inputStr(phrase.format('name'),
+                         blockRegexes=[(r'\d+',
+                                        "Names should contain only letters.")])
+    data['Name'] = name
+
     while True:
         surname = input(phrase.format('surname'))
         if surname.isalpha():
@@ -116,23 +117,38 @@ phone_numbers = []
 if __name__ == "__main__":
     myOutputFile = csv.writer(open("AddressBook.csv", "w"))
     print("Hello and welcome to the address book. ")
-    while True:
-        while True:
-            user_input = input("Select an option: \n (c)reate an entry, \n (r)ead existing information \n (u)pdate information \n (d)elete information \n (q)uit?. \n")
-            if user_input.lower() in ['c', 'r', 'u', 'd', 'q']:
-                break
-            else:
-                print("Please select one of the available options.")
-                continue
-        if user_input == 'q':
-            break
-        elif user_input.lower() == 'c':
-            createEntry()
-        elif user_input.lower() == 'r':
-            reviewInformation()
-        elif user_input.lower() == 'u':
-            updateInformation()
-        elif user_input.lower() == 'd':
-            deleteInformation()
-        else:
-            die()
+    # while True:
+    #     while True:
+    #         user_input = input("Select an option: \n (c)reate an entry, \n (r)ead existing information \n (u)pdate information \n (d)elete information \n (q)uit?. \n")
+    #         if user_input.lower() in ['c', 'r', 'u', 'd', 'q']:
+    #             break
+    #         else:
+    #             print("Please select one of the available options.")
+    #             continue
+    #     if user_input == 'q':
+    #         break
+    #     elif user_input.lower() == 'c':
+    #         createEntry()
+    #     elif user_input.lower() == 'r':
+    #         reviewInformation()
+    #     elif user_input.lower() == 'u':
+    #         updateInformation()
+    #     elif user_input.lower() == 'd':
+    #         deleteInformation()
+    #     else:
+    #         die()
+
+    user_input = pyip.inputMenu(['create an entry', 'read existing information',
+                                'update information', 'delete information',
+                                 'quit'], numbered=True)
+    if user_input == 'quit':
+        print('Quitting program...')
+        exit(0)
+    elif user_input == 'create an entry':
+        createEntry()
+    elif user_input == 'read existing information':
+        reviewInformation()
+    elif user_input == 'update information':
+        updateInformation()
+    elif user_input == 'delete information':
+        deleteInformation()
