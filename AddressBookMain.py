@@ -4,6 +4,8 @@ import csv
 import re
 import collections
 import pyinputplus as pyip
+import pprint
+import datetime
 
 
 def die():
@@ -26,19 +28,16 @@ def createEntry():
                                         "Names should contain only letters.")])
     data['Name'] = name
 
-    while True:
-        surname = input(phrase.format('surname'))
-        if surname.isalpha():
-            data['Surname'] = surname
-            break
-    while True:
-        try:
-            age = int(input(phrase.format('age')))
-            data['Age'] = str(age)
-            break
-        except ValueError:
-            print('Please enter a number.')
-            continue
+    surname = pyip.inputStr(phrase.format('surname'),
+                            blockRegexes=[(r'\d+',
+                                          "Names should contain only letters.")])
+    data['Surname'] = surname
+
+    age = pyip.inputDate(phrase.format('Birthday') + 'Blank to skip.', blank=True)
+    print(type(age))
+    if type(age) == datetime.date:
+        data['Birthday'] = str(age.day) + '.' + str(age.month) + '.' + str(age.year)
+    pprint.pprint(data)
     while True:
         street = input(phrase.format('street and housenumber'))
         street_dict = streetChecker(street)
