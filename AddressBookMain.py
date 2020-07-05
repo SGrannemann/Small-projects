@@ -7,6 +7,8 @@ import pyinputplus as pyip
 import pprint
 import datetime
 
+streetRegEx = r'([a-zA-Z]+(\s|-)?)+\s(\d{1,3})'
+
 
 def die():
     """Function used for debugging purposes.
@@ -38,14 +40,13 @@ def createEntry():
     if type(age) == datetime.date:
         data['Birthday'] = str(age.day) + '.' + str(age.month) + '.' + str(age.year)
     pprint.pprint(data)
-    while True:
-        street = input(phrase.format('street and housenumber'))
-        street_dict = streetChecker(street)
-        if street_dict:
-            data['Street'] = street_dict['Street']
-            data['Housenumber'] = street_dict['Housenumber']
-            break
-        print('Please enter the street and housenumber in a valid format.')
+
+    street = pyip.inputRegex(streetRegEx,
+                             prompt=phrase.format('street and housenumber'))
+    street_dict = streetSplitter(street, streetRegEx)
+    data['Street'] = street_dict['Street']
+    data['Housenumber'] = street_dict['Housenumber']
+
     print(street_dict)
 
     while True:
@@ -61,16 +62,13 @@ def createEntry():
     #    myOutputFile.writerow([key, value])
 
 
-def streetChecker(street):
-    streetRegExObject = re.compile(r'([a-zA-Z]+(\s|-)?)+\s(\d{1,3})')
+def streetSplitter(street, regexString):
+    streetRegExObject = re.compile(regexString)
     mo = streetRegExObject.search(street)
     dict = {}
-    if mo:
-        print('correct street entered.')
-        dict['Street'] = mo.group(1)
-        dict['Housenumber'] = mo.group(3)
-    else:
-        print('no regex match found.')
+    dict['Street'] = mo.group(1)
+    dict['Housenumber'] = mo.group(3)
+
     return dict
 
 
