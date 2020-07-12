@@ -7,7 +7,7 @@ import pyinputplus as pyip
 import pprint
 import datetime
 
-streetRegEx = r'([a-zA-Z]+(\s|-)?)+\s(\d{1,3})'
+
 
 
 def die():
@@ -49,14 +49,12 @@ def createEntry():
 
     print(street_dict)
 
-    while True:
-        city = input(phrase.format('zipcode and city'))
-        city_dict = cityChecker(city)
-        if city_dict:
-            break
-        print(' Please enter the zip code and city in a valid format.')
-    print(city_dict)
 
+    city = pyip.inputRegex(cityRegex, prompt=phrase.format('zipcode and city'))
+    #city_dict = citySplitter(city, cityRegex)
+    #data['zipcode'] = city_dict['zipcode']
+    #data['city'] = city_dict['city']
+    data['zipcode'], data['city'] = citySplitter(city, cityRegex)
     print(data)
     # for key, value in path_ID_dict.items():
     #    myOutputFile.writerow([key, value])
@@ -72,18 +70,14 @@ def streetSplitter(street, regexString):
     return dict
 
 
-def cityChecker(city):
+def citySplitter(city, regexString):
     # does not correctly work for Porta Westfalica
-    cityCheckerRegExObject = re.compile(r'(\d{5})\s([a-zA-Z]+(\s|-)?)+')
+    cityCheckerRegExObject = re.compile(regexString)
     mo = cityCheckerRegExObject.search(city)
-    dict = {}
-    if mo:
-        print('correct city entered.')
-        dict['zipcode'] = mo.group(1)
-        dict['city'] = mo.group(2)
-    else:
-        print('no regex match found.')
-    return dict
+
+    if mo.group(4):
+        return (mo.group(1), mo.group(2)+mo.group(3)+mo.group(4))
+    return (mo.group(1), mo.group(2))
 
 
 def reviewInformation():
@@ -99,13 +93,8 @@ def updateInformation():
 
 
 phrase = 'Please provide the {}. \n'
-names = []
-surnames = []
-ages = []
-addresses = []
-emails = []
-phone_numbers = []
-
+streetRegEx = r'([a-zA-Z]+(\s|-)?)+\s(\d{1,3})'
+cityRegex = r'(\d{5})\s([a-zA-Z]+)(\s|-)?([a-zA-Z]+)?'
 
 # for key, value in path_ID_dict.items():
 # myOutputFile.writerow([key, value])
