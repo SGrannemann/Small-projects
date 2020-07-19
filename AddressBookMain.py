@@ -9,8 +9,6 @@ import datetime
 from pathlib import Path
 
 
-
-
 def die():
     """Function used for debugging purposes.
 
@@ -23,7 +21,7 @@ def die():
 
 def createEntry():
 
-    data = collections.OrderedDict()
+
     print("createEntry was activated.")
     name = pyip.inputStr(phrase.format('name'),
                          blockRegexes=[(r'\d+',
@@ -41,7 +39,7 @@ def createEntry():
     if type(birthday) == datetime.date:
         data['Birthday'] = str(birthday.day) + '.' + str(birthday.month) + '.' + str(birthday.year)
     else:
-        data['Birthday'] = 'Null'
+        data['Birthday'] = 'Empty'
 
     street = pyip.inputRegex(streetRegEx,
                              prompt=phrase.format('street and housenumber'))
@@ -51,9 +49,7 @@ def createEntry():
     data['zipcode'], data['city'] = partition_city(city, cityRegex)
 
 
-    print(data)
     fieldnames = list(data.keys())
-    path = Path.cwd()/'AddressBook.csv'
     if not path.is_file():
         file = open("AddressBook.csv", "a+", newline='')
         writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -64,7 +60,6 @@ def createEntry():
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writerow(data)
     file.close()
-
 
 
 def partition_street(street, regexString):
@@ -83,6 +78,24 @@ def partition_city(city, regexString):
 
 def reviewInformation():
     print("reviewInformation was activated.")
+    # TODO: read in CSV file line by line and display the line specified via
+    # TODO: pprint
+    # open the file and the dictionary based on the file header
+    file = open("AddressBook.csv", "r", newline='')
+    filereader = csv.reader(file)
+    for row in filereader:
+        for key in row:
+            data[key] = 'Empty'
+        break
+    #print(data)
+    #fieldnames = list(data.keys())
+    #filereader = csv.DictReader(file, fieldnames=fieldnames)
+
+    #entry = pyip.inputMenu(['show all content', 'show a single entry',],
+     #                                    numbered=True)
+    #if entry == 'show all content':
+    #    for row in filereader:
+
 
 
 def deleteInformation():
@@ -93,16 +106,19 @@ def updateInformation():
     print("updateInformation was activated.")
 
 
+path = Path.cwd()/'AddressBook.csv'
 phrase = 'Please provide the {}. \n'
 streetRegEx = r'([a-zA-Z-\s]+)\s(\d{1,3})$'
 cityRegex = r'^(\d{5})\s([a-zA-Z-\s]+)'
+data = collections.OrderedDict()
+
 
 # for key, value in path_ID_dict.items():
 # myOutputFile.writerow([key, value])
 
 ###############################################################################
 if __name__ == "__main__":
-    #myOutputFile = csv.writer(open("AddressBook.csv", "w"))
+
     print("Hello and welcome to the address book. ")
 
     user_input = pyip.inputMenu(['create an entry', 'read existing information',
