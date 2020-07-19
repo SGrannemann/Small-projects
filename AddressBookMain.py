@@ -23,7 +23,7 @@ def createEntry():
 
 
     print("createEntry was activated.")
-    name = pyip.inputStr(phrase.format('name'),
+    name = pyip.inputStr(phrase.format(' first name'),
                          blockRegexes=[(r'\d+',
                                         "Names should contain only letters.")])
     data['Name'] = name
@@ -78,24 +78,46 @@ def partition_city(city, regexString):
 
 def reviewInformation():
     print("reviewInformation was activated.")
-    # TODO: read in CSV file line by line and display the line specified via
-    # TODO: pprint
-    # open the file and the dictionary based on the file header
+    # open the file and create the dictionary based on the file header
+    # this way, we get the fieldnames for reading in the actual data dynamically
+    # based on the file.
     file = open("AddressBook.csv", "r", newline='')
     filereader = csv.reader(file)
     for row in filereader:
         for key in row:
             data[key] = 'Empty'
         break
-    #print(data)
-    #fieldnames = list(data.keys())
-    #filereader = csv.DictReader(file, fieldnames=fieldnames)
+    file.close()
+    # now use the collected keys from the header to map values that will be read
+    # in to dict keys.
+    fieldnames = list(data.keys())
+    file = open("AddressBook.csv", "r", newline='')
+    filereader = csv.DictReader(file, fieldnames=fieldnames)
+    # skip the first line because it is only the header of the data
+    next(filereader)
 
-    #entry = pyip.inputMenu(['show all content', 'show a single entry',],
-     #                                    numbered=True)
-    #if entry == 'show all content':
-    #    for row in filereader:
+    entry = pyip.inputMenu(['show all content', 'show a single entry',
+                           'show all entries that match a condition'],
+                           numbered=True)
+    if entry == 'show all content':
+        for row in filereader:
+            pprint.pprint(row)
+    if entry == 'show a single entry':
+        singleEntry(filereader)
+    # TODO: add the third option that filters based on a value for a key
 
+
+def singleEntry(filereader):
+    name = pyip.inputStr(phrase.format(' first name'),
+                         blockRegexes=[(r'\d+',
+                                        "Names should contain only letters.")])
+    surname = pyip.inputStr(phrase.format('surname'),
+                            blockRegexes=[(r'\d+',
+                                          "Names should contain only letters.")])
+    list1 = [name, surname]
+    for row in filereader:
+        if all(any(entered == value for value in list(row.values())) for entered in list1):
+            pprint.pprint(row)
 
 
 def deleteInformation():
@@ -112,9 +134,6 @@ streetRegEx = r'([a-zA-Z-\s]+)\s(\d{1,3})$'
 cityRegex = r'^(\d{5})\s([a-zA-Z-\s]+)'
 data = collections.OrderedDict()
 
-
-# for key, value in path_ID_dict.items():
-# myOutputFile.writerow([key, value])
 
 ###############################################################################
 if __name__ == "__main__":
