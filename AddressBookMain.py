@@ -81,15 +81,11 @@ def reviewInformation():
     # open the file and create the dictionary based on the file header
     # this way, we get the fieldnames for reading in the actual data dynamically
     # based on the file.
-    file = open("AddressBook.csv", "r", newline='')
-    filereader = csv.reader(file)
-    for row in filereader:
-        for key in row:
-            data.setdefault(key, None)
-        break
-    file.close()
+
+    data = prepareDict()
+
     # now use the collected keys from the header to map values that will be read
-    # in to dict keys.
+    # to dict keys.
     fieldnames = list(data.keys())
     file = open("AddressBook.csv", "r", newline='')
     filereader = csv.DictReader(file, fieldnames=fieldnames)
@@ -106,8 +102,20 @@ def reviewInformation():
         singleEntry(filereader)
     if entry == 'show all entries that match a condition':
         filterEntries(filereader)
-    # TODO: add the third option that filters based on a value for a key
     file.close()
+
+
+def prepareDict():
+    data = {}
+    file = open("AddressBook.csv", "r", newline='')
+    filereader = csv.reader(file)
+    for row in filereader:
+        for key in row:
+            data.setdefault(key, None)
+        break
+    file.close()
+    return data
+
 
 def singleEntry(filereader):
     name = pyip.inputStr(phrase.format(' first name'),
@@ -128,8 +136,14 @@ def filterEntries(filereader):
         if any(userInput in value for value in list(row.values())):
             pprint.pprint(row)
 
+
 def deleteInformation():
     print("deleteInformation was activated.")
+
+    data = prepareDict()
+    # TODO: add option to delete all entries / empty the AddressBook
+    # TODO: add a boolean option to function single entry that allows you to
+    # switch between displaying an entry and deleting it.
 
 
 def updateInformation():
