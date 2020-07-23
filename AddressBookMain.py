@@ -85,7 +85,7 @@ def reviewInformation():
     filereader = csv.reader(file)
     for row in filereader:
         for key in row:
-            data[key] = 'Empty'
+            data.setdefault(key, None)
         break
     file.close()
     # now use the collected keys from the header to map values that will be read
@@ -104,8 +104,10 @@ def reviewInformation():
             pprint.pprint(row)
     if entry == 'show a single entry':
         singleEntry(filereader)
+    if entry == 'show all entries that match a condition':
+        filterEntries(filereader)
     # TODO: add the third option that filters based on a value for a key
-
+    file.close()
 
 def singleEntry(filereader):
     name = pyip.inputStr(phrase.format(' first name'),
@@ -119,6 +121,12 @@ def singleEntry(filereader):
         if all(any(entered == value for value in list(row.values())) for entered in list1):
             pprint.pprint(row)
 
+
+def filterEntries(filereader):
+    userInput = input('Enter a name, surname, street or city for which you want to display all matching entries.\n')
+    for row in filereader:
+        if any(userInput in value for value in list(row.values())):
+            pprint.pprint(row)
 
 def deleteInformation():
     print("deleteInformation was activated.")
