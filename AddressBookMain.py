@@ -2,7 +2,7 @@
 
 import csv
 import re
-import collections
+#import collections
 import pyinputplus as pyip
 import pprint
 import datetime
@@ -20,7 +20,7 @@ def die():
 
 
 def createEntry():
-
+    # TODO: add check if entry already exists
 
     print("createEntry was activated.")
     name = pyip.inputStr(phrase.format(' first name'),
@@ -77,20 +77,14 @@ def partition_city(city, regexString):
 
 
 def reviewInformation():
+    # TODO: Add exception handling for file not available
     print("reviewInformation was activated.")
-    # open the file and create the dictionary based on the file header
-    # this way, we get the fieldnames for reading in the actual data dynamically
-    # based on the file.
 
-    data = prepareDict()
 
-    # now use the collected keys from the header to map values that will be read
-    # to dict keys.
-    fieldnames = list(data.keys())
+
     file = open("AddressBook.csv", "r", newline='')
-    filereader = csv.DictReader(file, fieldnames=fieldnames)
-    # skip the first line because it is only the header of the data
-    next(filereader)
+    filereader = csv.DictReader(file)  # fieldnames=fieldnames)
+
 
     entry = pyip.inputMenu(['show all content', 'show a single entry',
                            'show all entries that match a condition'],
@@ -106,6 +100,7 @@ def reviewInformation():
 
 
 def prepareDict():
+    # TODO: to be deleted.
     data = {}
     file = open("AddressBook.csv", "r", newline='')
     filereader = csv.reader(file)
@@ -124,26 +119,44 @@ def singleEntry(filereader):
     surname = pyip.inputStr(phrase.format('surname'),
                             blockRegexes=[(r'\d+',
                                           "Names should contain only letters.")])
-    list1 = [name, surname]
+    list1 = [name.lower(), surname.lower()]
     for row in filereader:
-        if all(any(entered == value for value in list(row.values())) for entered in list1):
+        if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
             pprint.pprint(row)
 
 
 def filterEntries(filereader):
     userInput = input('Enter a name, surname, street or city for which you want to display all matching entries.\n')
     for row in filereader:
-        if any(userInput in value for value in list(row.values())):
+        if any(userInput.lower() in value.lower() for value in list(row.values())):
             pprint.pprint(row)
 
 
 def deleteInformation():
+    # TODO: add exception handling for file
     print("deleteInformation was activated.")
-
-    data = prepareDict()
+    file = open("AddressBook.csv", "r", newline='')
+    filereader = csv.DictReader(file)
+    for row in filereader:
+        print(row)
+    list_of_entries = [dict for row in filereader]
+    print(list_of_entries)
+    #data = prepareDict()
     # TODO: add option to delete all entries / empty the AddressBook
     # TODO: add a boolean option to function single entry that allows you to
-    # switch between displaying an entry and deleting it.
+    # switch between displaying an entry and deleting
+
+def deleteEntry(filereader):
+    name = pyip.inputStr(phrase.format(' first name'),
+                         blockRegexes=[(r'\d+',
+                                        "Names should contain only letters.")])
+    surname = pyip.inputStr(phrase.format('surname'),
+                            blockRegexes=[(r'\d+',
+                                          "Names should contain only letters.")])
+    list1 = [name.lower(), surname.lower()]
+    for row in filereader:
+        if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
+            pprint.pprint(row)
 
 
 def updateInformation():
@@ -154,7 +167,7 @@ path = Path.cwd()/'AddressBook.csv'
 phrase = 'Please provide the {}. \n'
 streetRegEx = r'([a-zA-Z-\s]+)\s(\d{1,3})$'
 cityRegex = r'^(\d{5})\s([a-zA-Z-\s]+)'
-data = collections.OrderedDict()
+data = {}
 
 
 ###############################################################################
