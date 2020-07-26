@@ -9,56 +9,58 @@ import datetime
 from pathlib import Path
 
 
-def die():
-    """Function used for debugging purposes.
-
-
-    Call it in all conditional branches that should never be evaluated.
-    Prints to the command line and makes a clean exit."""
-    print("this should not be evaluated.")
-    exit(0)
 
 
 def createEntry():
     # TODO: add check if entry already exists
-
+    # TODO: change everything to work with a list of dicts.
     print("createEntry was activated.")
-    name = pyip.inputStr(phrase.format(' first name'),
-                         blockRegexes=[(r'\d+',
-                                        "Names should contain only letters.")])
-    data['Name'] = name
+    list_of_entries = []
+    while True:
+        name = pyip.inputStr(phrase.format(' first name'),
+                             blockRegexes=[(r'\d+',
+                                            "Names should contain only letters.")])
+        data['Name'] = name
 
-    surname = pyip.inputStr(phrase.format('surname'),
-                            blockRegexes=[(r'\d+',
-                                          "Names should contain only letters.")])
-    data['Surname'] = surname
+        surname = pyip.inputStr(phrase.format('surname'),
+                                blockRegexes=[(r'\d+',
+                                              "Names should contain only letters.")])
+        data['Surname'] = surname
 
-    birthday = pyip.inputDate(phrase.format('Birthday') + 'Blank to skip.',
-                              blank=True)
+        birthday = pyip.inputDate(phrase.format('Birthday') + 'Blank to skip.',
+                                  blank=True)
 
-    if type(birthday) == datetime.date:
-        data['Birthday'] = str(birthday.day) + '.' + str(birthday.month) + '.' + str(birthday.year)
-    else:
-        data['Birthday'] = 'Empty'
+        if type(birthday) == datetime.date:
+            data['Birthday'] = str(birthday.day) + '.' + str(birthday.month) + '.' + str(birthday.year)
+        else:
+            data['Birthday'] = 'Empty'
 
-    street = pyip.inputRegex(streetRegEx,
-                             prompt=phrase.format('street and housenumber'))
-    data['Street'], data['Housenumber'] = partition_street(street, streetRegEx)
+        street = pyip.inputRegex(streetRegEx,
+                                 prompt=phrase.format('street and housenumber'))
+        data['Street'], data['Housenumber'] = partition_street(street, streetRegEx)
 
-    city = pyip.inputRegex(cityRegex, prompt=phrase.format('zipcode and city'))
-    data['zipcode'], data['city'] = partition_city(city, cityRegex)
+        city = pyip.inputRegex(cityRegex, prompt=phrase.format('zipcode and city'))
+        data['Zipcode'], data['City'] = partition_city(city, cityRegex)
+        list_of_entries.append(data.copy())
 
+        inputForBreak = pyip.inputMenu(['Enter new entry', 'Save and quit'],
+                               numbered=True)
+        if inputForBreak == 'Enter new entry':
+            continue
+        if inputForBreak == 'Save and quit':
+            break
 
     fieldnames = list(data.keys())
-    if not path.is_file():
+    try:
         file = open("AddressBook.csv", "a+", newline='')
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerow(data)
-    else:
-        file = open("AddressBook.csv", "a+", newline='')
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writerow(data)
+    except IOError:
+        print('Writing to file not possible.')
+
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+    writer.writeheader()
+    for entry in list_of_entries:
+        writer.writerow(entry)
     file.close()
 
 
@@ -83,7 +85,7 @@ def reviewInformation():
 
 
     file = open("AddressBook.csv", "r", newline='')
-    filereader = csv.DictReader(file)  # fieldnames=fieldnames)
+    filereader = csv.DictReader(file) # fieldnames=fieldnames)
 
 
     entry = pyip.inputMenu(['show all content', 'show a single entry',
@@ -91,7 +93,7 @@ def reviewInformation():
                            numbered=True)
     if entry == 'show all content':
         for row in filereader:
-            pprint.pprint(row)
+            print(row)
     if entry == 'show a single entry':
         singleEntry(filereader)
     if entry == 'show all entries that match a condition':
@@ -99,17 +101,7 @@ def reviewInformation():
     file.close()
 
 
-def prepareDict():
-    # TODO: to be deleted.
-    data = {}
-    file = open("AddressBook.csv", "r", newline='')
-    filereader = csv.reader(file)
-    for row in filereader:
-        for key in row:
-            data.setdefault(key, None)
-        break
-    file.close()
-    return data
+
 
 
 def singleEntry(filereader):
@@ -122,14 +114,14 @@ def singleEntry(filereader):
     list1 = [name.lower(), surname.lower()]
     for row in filereader:
         if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
-            pprint.pprint(row)
+            print(row)
 
 
 def filterEntries(filereader):
     userInput = input('Enter a name, surname, street or city for which you want to display all matching entries.\n')
     for row in filereader:
         if any(userInput.lower() in value.lower() for value in list(row.values())):
-            pprint.pprint(row)
+            print(row)
 
 
 def deleteInformation():
