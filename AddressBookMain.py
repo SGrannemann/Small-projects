@@ -2,7 +2,6 @@
 
 import csv
 import re
-#import collections
 import pyinputplus as pyip
 import pprint
 import datetime
@@ -13,7 +12,7 @@ from pathlib import Path
 
 def createEntry():
     # TODO: add check if entry already exists
-    # TODO: change everything to work with a list of dicts.
+
     print("createEntry was activated.")
     list_of_entries = []
     while True:
@@ -51,16 +50,28 @@ def createEntry():
             break
 
     fieldnames = list(data.keys())
-    try:
-        file = open("AddressBook.csv", "a+", newline='')
-    except IOError:
-        print('Writing to file not possible.')
+    if not path.is_file():
 
-    writer = csv.DictWriter(file, fieldnames=fieldnames)
+        try:
+            file = open("AddressBook.csv", "a+", newline='')
+        except IOError:
+            print('Writing to file not possible.')
 
-    writer.writeheader()
-    for entry in list_of_entries:
-        writer.writerow(entry)
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for entry in list_of_entries:
+            writer.writerow(entry)
+    else:
+        try:
+            file = open("AddressBook.csv", "a+", newline='')
+        except IOError:
+            print('Writing to file not possible.')
+
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+        for entry in list_of_entries:
+            writer.writerow(entry)
     file.close()
 
 
@@ -80,6 +91,7 @@ def partition_city(city, regexString):
 
 def reviewInformation():
     # TODO: Add exception handling for file not available
+    # TODO:
     print("reviewInformation was activated.")
 
 
@@ -113,6 +125,7 @@ def singleEntry(filereader):
                                           "Names should contain only letters.")])
     list1 = [name.lower(), surname.lower()]
     for row in filereader:
+
         if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
             print(row)
 
