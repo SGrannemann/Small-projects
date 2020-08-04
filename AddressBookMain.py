@@ -40,7 +40,23 @@ def createEntry():
 
         city = pyip.inputRegex(cityRegex, prompt=phrase.format('zipcode and city'))
         data['Zipcode'], data['City'] = partition_city(city, cityRegex)
-        list_of_entries.append(data.copy())
+
+        if path.is_file():
+            try:
+                file = open("AddressBook.csv", "r", newline='')
+                filereader = csv.DictReader(file)
+            except IOError:
+                print('File not found.')
+            list1 = [name.lower(), surname.lower()]
+            for row in filereader:
+                if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
+                    print('An entry for that person already exists.')
+                    data.clear()
+                else:
+                    list_of_entries.append(data.copy())
+            file.close()
+        else:
+            list_of_entries.append(data.copy())
 
         inputForBreak = pyip.inputMenu(['Enter new entry', 'Save and quit'],
                                numbered=True)
@@ -48,31 +64,31 @@ def createEntry():
             continue
         if inputForBreak == 'Save and quit':
             break
+    if data:
+        fieldnames = list(data.keys())
+        if not path.is_file() :
 
-    fieldnames = list(data.keys())
-    if not path.is_file():
+            try:
+                file = open("AddressBook.csv", "a+", newline='')
+            except IOError:
+                print('Writing to file not possible.')
 
-        try:
-            file = open("AddressBook.csv", "a+", newline='')
-        except IOError:
-            print('Writing to file not possible.')
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for entry in list_of_entries:
+                writer.writerow(entry)
+        else:
+            try:
+                file = open("AddressBook.csv", "a+", newline='')
+            except IOError:
+                print('Writing to file not possible.')
 
-        writer.writeheader()
-        for entry in list_of_entries:
-            writer.writerow(entry)
-    else:
-        try:
-            file = open("AddressBook.csv", "a+", newline='')
-        except IOError:
-            print('Writing to file not possible.')
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-        for entry in list_of_entries:
-            writer.writerow(entry)
-    file.close()
+            for entry in list_of_entries:
+                writer.writerow(entry)
+        file.close()
 
 
 def partition_street(street, regexString):
