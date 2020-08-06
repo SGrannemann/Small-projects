@@ -65,6 +65,7 @@ def createEntry():
         if inputForBreak == 'Save and quit':
             break
     if data:
+
         fieldnames = list(data.keys())
         if not path.is_file() :
 
@@ -156,18 +157,21 @@ def filterEntries(filereader):
 def deleteInformation():
     # TODO: add exception handling for file
     print("deleteInformation was activated.")
+    list_of_entries = []
     file = open("AddressBook.csv", "r", newline='')
     filereader = csv.DictReader(file)
     for row in filereader:
         print(row)
-    list_of_entries = [dict for row in filereader]
+        list_of_entries.append(row)
+    #list_of_entries = [dict for row in filereader]
     print(list_of_entries)
+    deleteEntry(list_of_entries)
     #data = prepareDict()
     # TODO: add option to delete all entries / empty the AddressBook
     # TODO: add a boolean option to function single entry that allows you to
     # switch between displaying an entry and deleting
 
-def deleteEntry(filereader):
+def deleteEntry(list_of_entries):
     name = pyip.inputStr(phrase.format(' first name'),
                          blockRegexes=[(r'\d+',
                                         "Names should contain only letters.")])
@@ -175,9 +179,9 @@ def deleteEntry(filereader):
                             blockRegexes=[(r'\d+',
                                           "Names should contain only letters.")])
     list1 = [name.lower(), surname.lower()]
-    for row in filereader:
-        if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
-            pprint.pprint(row)
+    for dictionary in list_of_entries:
+        if all(any(entered == value.lower() for value in list(dictionary.values())) for entered in list1):
+            print(dictionary)
 
 
 def updateInformation():
