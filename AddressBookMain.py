@@ -3,7 +3,6 @@
 import csv
 import re
 import pyinputplus as pyip
-import pprint
 import datetime
 from pathlib import Path
 
@@ -11,7 +10,7 @@ from pathlib import Path
 
 
 def createEntry():
-    # TODO: add check if entry already exists
+
 
     print("createEntry was activated.")
     list_of_entries = []
@@ -67,7 +66,7 @@ def createEntry():
     if data:
 
         fieldnames = list(data.keys())
-        if not path.is_file() :
+        if not path.is_file():
 
             try:
                 file = open("AddressBook.csv", "a+", newline='')
@@ -96,7 +95,7 @@ def partition_street(street, regexString):
     streetRegExObject = re.compile(regexString)
     mo = streetRegExObject.search(street)
     # group 1 is name of the street, group 2 is the housenumber
-    return (mo.group(1), mo.group(2))
+    return mo.group(1), mo.group(2)
 
 
 def partition_city(city, regexString):
@@ -107,13 +106,14 @@ def partition_city(city, regexString):
 
 
 def reviewInformation():
-    # TODO: Add exception handling for file not available
+
     # TODO:
     print("reviewInformation was activated.")
 
-
-
-    file = open("AddressBook.csv", "r", newline='')
+    try:
+        file = open("AddressBook.csv", "r", newline='')
+    except IOError:
+        print("File not found.")
     filereader = csv.DictReader(file) # fieldnames=fieldnames)
 
 
@@ -134,24 +134,33 @@ def reviewInformation():
 
 
 def singleEntry(filereader):
-    name = pyip.inputStr(phrase.format(' first name'),
+    name = pyip.inputStr(phrase.format('first name'),
                          blockRegexes=[(r'\d+',
                                         "Names should contain only letters.")])
     surname = pyip.inputStr(phrase.format('surname'),
                             blockRegexes=[(r'\d+',
                                           "Names should contain only letters.")])
     list1 = [name.lower(), surname.lower()]
+    count = 0
     for row in filereader:
 
         if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
             print(row)
+            count += 1
+
+    if count == 0:
+        print("Entry not found.")
 
 
 def filterEntries(filereader):
     userInput = input('Enter a name, surname, street or city for which you want to display all matching entries.\n')
+    count = 0
     for row in filereader:
         if any(userInput.lower() in value.lower() for value in list(row.values())):
             print(row)
+            count += 1
+        if count == 0:
+            print("No matching entry found.")
 
 
 def deleteInformation():
@@ -168,11 +177,10 @@ def deleteInformation():
     deleteEntry(list_of_entries)
     #data = prepareDict()
     # TODO: add option to delete all entries / empty the AddressBook
-    # TODO: add a boolean option to function single entry that allows you to
-    # switch between displaying an entry and deleting
+
 
 def deleteEntry(list_of_entries):
-    name = pyip.inputStr(phrase.format(' first name'),
+    name = pyip.inputStr(phrase.format('first name'),
                          blockRegexes=[(r'\d+',
                                         "Names should contain only letters.")])
     surname = pyip.inputStr(phrase.format('surname'),
