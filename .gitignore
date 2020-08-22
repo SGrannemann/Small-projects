@@ -1,3 +1,5 @@
 AddressBook.csv
 Output.csv
 venv/
+.idea
+.venv
