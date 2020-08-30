@@ -177,7 +177,10 @@ def deleteInformation():
     # TODO: add exception handling for file
     print("deleteInformation was activated.")
     list_of_entries = []
-    file = open("AddressBook.csv", "r", newline='')
+    try:
+        file = open("AddressBook.csv", "r", newline='')
+    except IOError:
+        print('File not accessible.')
     filereader = csv.DictReader(file)
     for row in filereader:
         print(row)
