@@ -1,13 +1,15 @@
-#!/usr/bin/env python3
-
 import csv
 import re
-import pyinputplus as pyip
 import datetime
 from pathlib import Path
+import pyinputplus as pyip
 
 
 
+# TODO: Complete Update function
+# TODO: Add option to delete whole file.
+# TODO: Look for options to use more functions (for reuse) especially in create Entry option.
+# TODO: analyze for refactoring options.
 
 def createEntry():
 
@@ -140,9 +142,6 @@ def reviewInformation():
     file.close()
 
 
-
-
-
 def singleEntry(filereader):
     name = pyip.inputStr(phrase.format('first name'),
                          blockRegexes=[(r'\d+',
@@ -174,7 +173,7 @@ def filterEntries(filereader):
 
 
 def deleteInformation():
-    # TODO: add exception handling for file
+  
     print("deleteInformation was activated.")
     list_of_entries = []
     try:
