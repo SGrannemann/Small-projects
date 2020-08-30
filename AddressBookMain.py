@@ -40,13 +40,15 @@ def createEntry():
         city = pyip.inputRegex(cityRegex, prompt=phrase.format('zipcode and city'))
         data['Zipcode'], data['City'] = partition_city(city, cityRegex)
 
+
+        list1 = [name.lower(), surname.lower()]
         if path.is_file():
             try:
                 file = open("AddressBook.csv", "r", newline='')
                 filereader = csv.DictReader(file)
             except IOError:
                 print('File not found.')
-            list1 = [name.lower(), surname.lower()]
+            
             for row in filereader:
                 if all(any(entered == value.lower() for value in list(row.values())) for entered in list1):
                     print('An entry for that person already exists.')
@@ -55,7 +57,15 @@ def createEntry():
                     list_of_entries.append(data.copy())
             file.close()
         else:
-            list_of_entries.append(data.copy())
+            if list_of_entries:
+                for dictionary in list_of_entries:
+                    if all(any(entered == value.lower() for value in list(dictionary.values())) for entered in list1):
+                        print('An entry for that person already exists.')
+                        data.clear()
+                    else:
+                        list_of_entries.append(data.copy())
+            else:
+                list_of_entries.append(data.copy())
 
         inputForBreak = pyip.inputMenu(['Enter new entry', 'Save and quit'],
                                numbered=True)
@@ -63,9 +73,9 @@ def createEntry():
             continue
         if inputForBreak == 'Save and quit':
             break
-    if data:
+    if list_of_entries:
 
-        fieldnames = list(data.keys())
+        fieldnames = list(list_of_entries[0].keys())
         if not path.is_file():
 
             try:
@@ -107,7 +117,7 @@ def partition_city(city, regexString):
 
 def reviewInformation():
 
-    # TODO:
+    
     print("reviewInformation was activated.")
 
     try:
@@ -172,10 +182,9 @@ def deleteInformation():
     for row in filereader:
         print(row)
         list_of_entries.append(row)
-    #list_of_entries = [dict for row in filereader]
-    print(list_of_entries)
+    file.close()
     deleteEntry(list_of_entries)
-    #data = prepareDict()
+    
     # TODO: add option to delete all entries / empty the AddressBook
 
 
@@ -189,9 +198,22 @@ def deleteEntry(list_of_entries):
     list1 = [name.lower(), surname.lower()]
     for dictionary in list_of_entries:
         if all(any(entered == value.lower() for value in list(dictionary.values())) for entered in list1):
-            print(dictionary)
+            
+            list_of_entries.remove(dictionary)
 
+    fieldnames = list(list_of_entries[0].keys())      
+    try:
+        file = open("AddressBook.csv", "w+", newline='')
+    except IOError:
+        print('Writing to file not possible.')
 
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+    writer.writeheader()
+    for entry in list_of_entries:
+        writer.writerow(entry)
+    file.close()
+
+    
 def updateInformation():
     print("updateInformation was activated.")
 
