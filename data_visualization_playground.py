@@ -15,8 +15,10 @@ year_cases_data.info()
 # replace all '.' in the Pflegetage column as these result in an error when converting to float
 year_cases_data['Pflegetage'] = year_cases_data['Pflegetage'].apply(lambda x: float(x.replace('.', '')))
 
-fig = px.line(year_cases_data, x=year_cases_data.index, y='Faelle', title='Plotly plot')
-fig.show()
+# plotly express graphics must be launched via IPython Kernel (i.e. interactive shell or jupyter notebook)
+# or by starting a Dash App (locally/offline is possible)
+# fig = px.line(year_cases_data, x=year_cases_data.index, y='Faelle', title='Plotly plot')
+# fig.show()
 
 
 
