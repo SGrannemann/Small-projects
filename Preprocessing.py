@@ -1,15 +1,25 @@
 import nltk
-# download tokenizer
-#nltk.download('punkt')
+
 from nltk.tokenize import word_tokenize
 import re
 # download list of stopwords
-nltk.download('stopwords')
-from nltk.corpus import stopwords
+
+from nltk.corpus import stopwords, wordnet
+
 
 #from nltk.stem.porter import PorterStemmer
 #stemmer = PorterStemmer()
 lemmatizer = nltk.WordNetLemmatizer()
+
+def get_wordnet_pos(word):
+    """Map POS tag to first character lemmatize() accepts"""
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+
+    return tag_dict.get(tag, wordnet.NOUN)
 
 
 def process_text(text):
@@ -21,6 +31,6 @@ def process_text(text):
     tokenized_text = word_tokenize(text)
 
     # Remove the stopwords and stem each word to its root
-    clean_text = [lemmatizer.lemmatize(word) for word in tokenized_text
+    clean_text = [lemmatizer.lemmatize(word, get_wordnet_pos(word)) for word in tokenized_text
                   if word not in stopwords.words('english')]
     return clean_text
