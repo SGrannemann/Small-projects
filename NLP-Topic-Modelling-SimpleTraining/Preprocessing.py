@@ -6,7 +6,7 @@ import re
 
 from nltk.corpus import stopwords, wordnet
 
-
+# a new comment
 #from nltk.stem.porter import PorterStemmer
 #stemmer = PorterStemmer()
 lemmatizer = nltk.WordNetLemmatizer()
