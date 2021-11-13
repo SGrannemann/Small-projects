@@ -131,3 +131,11 @@ dmypy.json
 
 # my own stuff
 *.csv
+*.png
+bin/
+include/
+lib/
+lib64/
+share/
+pyvenv.cfg
+mlruns/
